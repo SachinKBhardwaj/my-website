@@ -32,6 +32,11 @@
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
         }
         .gallery-item img {
             width: 100%;
@@ -39,30 +44,90 @@
             object-fit: cover;
             border-radius: 6px;
         }
+
+        /* Fullscreen Lightbox Overlay */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 85%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        .lightbox .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Welcome to My Website!</h1>
-    <p>This site is live, globally accessible, and hosted for free.</p>
+    <h1>Welcome to Advika & Anvika's world</h1>
+    <p>Click any photo to view it full size.</p>
 
-    <!-- Photo Gallery Section -->
+    <!-- Photo Gallery Grid (12 Images) -->
     <div class="gallery">
         <div class="gallery-item"><img src="images/IMG_20260914_010254024_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260912_141006172_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260928_133558922_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260926_221403695_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260926_221400271_HDR.jpg" alt="Gallery Image"></div>
-        <div class="gallery-item"><img src="images/IMG_20260926_221359030_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260919_182946889_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260919_182940880_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260914_203510657_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260914_203502557_HDR.jpg" alt="Gallery Image"></div>
-        <div class="gallery-item"><img src="images/IMG_20260914_203457893_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260914_010301688_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260914_010302260_HDR.jpg" alt="Gallery Image"></div>
         <div class="gallery-item"><img src="images/IMG_20260914_010302713.jpg" alt="Gallery Image"></div>
     </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="close" id="closeBtn">&times;</span>
+        <img id="lightboxImg" src="" alt="Expanded Image">
+    </div>
+
+    <script>
+        const galleryItems = document.querySelectorAll('.gallery-item img');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const closeBtn = document.getElementById('closeBtn');
+
+        // Open Lightbox on Click
+        galleryItems.forEach(img => {
+            img.addEventListener('click', () => {
+                lightbox.style.display = 'flex';
+                lightboxImg.src = img.src;
+            });
+        });
+
+        // Close Lightbox when clicking the X button
+        closeBtn.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+        });
+
+        // Close Lightbox when clicking anywhere on the dark overlay
+        lightbox.addEventListener('click', (e) => {
+            if (e.target !== lightboxImg) {
+                lightbox.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>
