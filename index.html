@@ -8,15 +8,61 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 50px;
+            padding: 30px;
             background-color: #f4f4f9;
+            margin: 0;
         }
-        h1 { color: #333; }
-        p { color: #666; font-size: 1.2rem; }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .gallery-item {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
+
     <h1>Welcome to My Website!</h1>
     <p>This site is live, globally accessible, and hosted for free.</p>
+
+    <!-- Photo Gallery Section -->
+    <div class="gallery">
+        <div class="gallery-item"><img src="images/IMG_20260914_010254024_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260912_141006172_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260928_133558922_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260926_221403695_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260926_221400271_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260926_221359030_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260919_182946889_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260919_182940880_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_203510657_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_203502557_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_203457893_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_010301688_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_010302260_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_010302713.jpg" alt="Gallery Image"></div>
+    </div>
+
 </body>
 </html>
