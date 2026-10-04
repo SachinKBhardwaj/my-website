@@ -4,15 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Personal Website</title>
-    
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 30px 10px;
+            padding: 30px 15px;
+            background-color: #f4f4f9;
+            margin: 0;
+            user-select: none;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Gallery Grid Layout */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .gallery-item {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Fullscreen Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 85%;
+            max-height: 85%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 6px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+            transition: transform 0.2s ease-out;
+            cursor: grab;
+        }
+
+        .lightbox-img:active {
+            cursor: grabbing;
+        }
+
+        /* Control Buttons */
+        .nav-btn, .close-btn, .zoom-btn {
+            position: absolute;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+            z-index: 1010;
+        }
+
+        .nav-btn:hover, .close-btn:hover, .zoom-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .close-btn {
+            top: 20px;
+            right: 25px;
+            font-size: 35px;
+        }
+
+        .prev-btn {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .next-btn {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Zoom Toolbar */
+        .zoom-toolbar {
+            position: absolute;
+            bottom: 25px;
+            display: flex;
+            gap: 15px;
+            z-index: 1010;
+        }
+
+        .zoom-btn {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to My World</h1>
+    <p>Click any photo to open full-screen mode with zoom and slide capabilities.</p>
+
+    <!-- Photo Gallery Grid (12 Images) -->
+    <div class="gallery">
+        <div class="gallery-item"><img src="images/IMG_20260914_010254024_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260912_141006172_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260928_133558922_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260926_221403695_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260926_221400271_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260919_182946889_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260919_182940880_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_203510657_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_203502557_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_010301688_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_010302260_HDR.jpg" alt="Gallery Image"></div>
+        <div class="gallery-item"><img src="images/IMG_20260914_010302713.jpg" alt="Gallery Image"></div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="close-btn" id="closeBtn">&times;</button>
+        <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
+        <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
+        
+        <divHere is the updated `index.html` file. It restores your original responsive grid gallery layout and upgrades the lightbox modal with:
+
+1. **Previous / Next Navigation Buttons** (and left/right keyboard arrow support) so you can scroll through all 12 photos continuously without closing the modal.
+2. **Zoom In, Zoom Out, and Reset Controls** (plus mouse wheel zoom and double-click to toggle zoom) for zooming into any photo.
+
+---
+
+### Updated `index.html` Code
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px 15px;
             background-color: #f4f4f9;
             margin: 0;
         }
@@ -25,43 +203,30 @@
             margin-bottom: 30px;
         }
 
-        /* Swiper Container Styles */
-        .swiper {
-            width: 90%;
-            max-width: 900px;
-            height: 450px;
+        /* Gallery Grid Layout */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
             margin: 0 auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            background: #000;
         }
-
-        .swiper-slide {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .gallery-item {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
+            transition: transform 0.2s ease;
         }
-
-        .swiper-slide img {
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+        .gallery-item img {
             width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 12px;
-        }
-
-        /* Customizing Navigation Arrows */
-        .swiper-button-next, .swiper-button-prev {
-            color: #ffffff;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-        }
-
-        .swiper-pagination-bullet-active {
-            background: #007aff;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
         }
 
         /* Fullscreen Lightbox Overlay */
@@ -73,105 +238,25 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
+            background-color: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+            user-select: none;
         }
+
+        .lightbox-img-wrapper {
+            position: relative;
+            max-width: 85%;
+            max-height: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
         .lightbox img {
-            max-width: 90%;
-            max-height: 85%;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-        .lightbox .close {
-            position: absolute;
-            top: 20px;
-            right: 35px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Welcome to My Website!</h1>
-    <p>Use the arrows or drag/swipe to scroll through the photos. Click any photo to expand.</p>
-
-    <!-- Swiper Image Scroller -->
-    <div class="swiper mySwiper">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide"><img src="images/IMG_20260914_010254024_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260912_141006172_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260928_133558922_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260926_221403695_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260926_221400271_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260919_182946889_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260919_182940880_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260914_203510657_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260914_203502557_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260914_010301688_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260914_010302260_HDR.jpg" alt="Slide Image"></div>
-            <div class="swiper-slide"><img src="images/IMG_20260914_010302713.jpg" alt="Slide Image"></div>
-        </div>
-        
-        <!-- Swiper Controls -->
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-pagination"></div>
-    </div>
-
-    <!-- Lightbox Modal -->
-    <div class="lightbox" id="lightbox">
-        <span class="close" id="closeBtn">&times;</span>
-        <img id="lightboxImg" src="" alt="Expanded Image">
-    </div>
-
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <script>
-        // Initialize Swiper
-        const swiper = new Swiper('.mySwiper', {
-            loop: true,
-            grabCursor: true,
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            keyboard: {
-                enabled: true,
-            },
-        });
-
-        // Lightbox Popup logic
-        const slideImages = document.querySelectorAll('.swiper-slide img');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightboxImg');
-        const closeBtn = document.getElementById('closeBtn');
-
-        slideImages.forEach(img => {
-            img.addEventListener('click', () => {
-                lightbox.style.display = 'flex';
-                lightboxImg.src = img.src;
-            });
-        });
-
-        closeBtn.addEventListener('click', () => {
-            lightbox.style.display = 'none';
-        });
-
-        lightbox.addEventListener('click', (e) => {
-            if (e.target !== lightboxImg) {
-                lightbox.style.display = 'none';
-            }
-        });
-    </script>
-
-</body>
-</html>
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 6px;
+            transition: transform 0.2
