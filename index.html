@@ -57,27 +57,29 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.92);
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .lightbox-content {
+            position: relative;
+            width: 85vw;
+            height: 80vh;
+            display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
         }
 
-        .lightbox-content {
-            position: relative;
-            max-width: 85%;
-            max-height: 85%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .lightbox-img {
             max-width: 100%;
-            max-height: 85vh;
+            max-height: 100%;
+            object-fit: contain;
             border-radius: 6px;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
-            transition: transform 0.2s ease-out;
+            transition: transform 0.15s ease-out;
             cursor: grab;
         }
 
@@ -86,17 +88,12 @@
         }
 
         /* Control Buttons */
-        .nav-btn, .close-btn, .zoom-btn {
-            position: absolute;
+        .nav-btn, .ctrl-btn {
             color: #fff;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -104,49 +101,45 @@
             z-index: 1010;
         }
 
-        .nav-btn:hover, .close-btn:hover, .zoom-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
+        .nav-btn:hover, .ctrl-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
 
-        .close-btn {
-            top: 20px;
-            right: 25px;
-            font-size: 35px;
-        }
-
-        .prev-btn {
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .next-btn {
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        /* Zoom Toolbar */
-        .zoom-toolbar {
+        .nav-btn {
             position: absolute;
-            bottom: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .prev-btn { left: 20px; }
+        .next-btn { right: 20px; }
+
+        /* Toolbar Controls */
+        .toolbar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             z-index: 1010;
         }
 
-        .zoom-btn {
-            position: relative;
-            width: 45px;
-            height: 45px;
+        .ctrl-btn {
+            width: 42px;
+            height: 42px;
             font-size: 22px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <h1>Welcome to My World</h1>
-    <p>Click any photo to open full-screen mode with zoom and slide capabilities.</p>
+    <h1>Welcome to My World!</h1>
+    <p>Click any photo to open. Scroll through images with arrows/swipe, and use zoom controls to inspect details.</p>
 
     <!-- Photo Gallery Grid (12 Images) -->
     <div class="gallery">
@@ -166,97 +159,178 @@
 
     <!-- Lightbox Modal -->
     <div class="lightbox" id="lightbox">
-        <button class="close-btn" id="closeBtn">&times;</button>
+        <div class="toolbar">
+            <button class="ctrl-btn" id="zoomInBtn" title="Zoom In">+</button>
+            <button class="ctrl-btn" id="zoomOutBtn" title="Zoom Out">&minus;</button>
+            <button class="ctrl-btn" id="zoomResetBtn" title="Reset Zoom">&#215;</button>
+            <button class="ctrl-btn" id="closeBtn" title="Close Viewer">&times;</button>
+        </div>
+
         <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
+
+        <div class="lightbox-content">
+            <img class="lightbox-img" id="lightboxImg" src="" alt="Expanded Image">
+        </div>
+
         <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
-        
-        <divHere is the updated `index.html` file. It restores your original responsive grid gallery layout and upgrades the lightbox modal with:
+    </div>
 
-1. **Previous / Next Navigation Buttons** (and left/right keyboard arrow support) so you can scroll through all 12 photos continuously without closing the modal.
-2. **Zoom In, Zoom Out, and Reset Controls** (plus mouse wheel zoom and double-click to toggle zoom) for zooming into any photo.
+    <script>
+        const galleryImgs = Array.from(document.querySelectorAll('.gallery-item img'));
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomResetBtn = document.getElementById('zoomResetBtn');
 
----
+        let currentIndex = 0;
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let touchStartX = 0;
 
-### Updated `index.html` Code
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Website</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 30px 15px;
-            background-color: #f4f4f9;
-            margin: 0;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #666;
-            margin-bottom: 30px;
+        function showImage(index) {
+            currentIndex = index;
+            lightboxImg.src = galleryImgs[currentIndex].src;
+            resetTransform();
         }
 
-        /* Gallery Grid Layout */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .gallery-item {
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .gallery-item:hover {
-            transform: scale(1.02);
-        }
-        .gallery-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 6px;
+        function resetTransform() {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            applyTransform();
         }
 
-        /* Fullscreen Lightbox Overlay */
-        .lightbox {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            user-select: none;
+        function applyTransform() {
+            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
         }
 
-        .lightbox-img-wrapper {
-            position: relative;
-            max-width: 85%;
-            max-height: 80%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+        // Open Modal
+        galleryImgs.forEach((img, idx) => {
+            img.addEventListener('click', () => {
+                lightbox.style.display = 'flex';
+                showImage(idx);
+            });
+        });
 
-        .lightbox img {
-            max-width: 100%;
-            max-height: 80vh;
-            border-radius: 6px;
-            transition: transform 0.2
+        // Navigation Controls
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const newIndex = (currentIndex - 1 + galleryImgs.length) % galleryImgs.length;
+            showImage(newIndex);
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const newIndex = (currentIndex + 1) % galleryImgs.length;
+            showImage(newIndex);
+        });
+
+        // Zoom Button Handlers
+        zoomInBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (scale < 3.5) scale += 0.3;
+            applyTransform();
+        });
+
+        zoomOutBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (scale > 0.6) scale -= 0.3;
+            if (scale <= 1) { translateX = 0; translateY = 0; }
+            applyTransform();
+        });
+
+        zoomResetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            resetTransform();
+        });
+
+        // Mouse Wheel Zooming
+        lightboxImg.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0 && scale < 3.5) {
+                scale += 0.15;
+            } else if (e.deltaY > 0 && scale > 0.6) {
+                scale -= 0.15;
+            }
+            if (scale <= 1) { translateX = 0; translateY = 0; }
+            applyTransform();
+        });
+
+        // Panning / Dragging when Zoomed In
+        lightboxImg.addEventListener('mousedown', (e) => {
+            if (scale > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                applyTransform();
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch Swipe Navigation for Mobile
+        lightbox.addEventListener('touchstart', (e) => {
+            if (scale === 1 && e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+            }
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', (e) => {
+            if (scale === 1 && touchStartX) {
+                const diffX = e.changedTouches[0].clientX - touchStartX;
+                if (diffX > 50) {
+                    showImage((currentIndex - 1 + galleryImgs.length) % galleryImgs.length);
+                } else if (diffX < -50) {
+                    showImage((currentIndex + 1) % galleryImgs.length);
+                }
+                touchStartX = 0;
+            }
+        }, { passive: true });
+
+        // Close Modal
+        closeBtn.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+            resetTransform();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
+                lightbox.style.display = 'none';
+                resetTransform();
+            }
+        });
+
+        // Keyboard Arrow Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.style.display === 'flex') {
+                if (e.key === 'ArrowLeft') {
+                    showImage((currentIndex - 1 + galleryImgs.length) % galleryImgs.length);
+                } else if (e.key === 'ArrowRight') {
+                    showImage((currentIndex + 1) % galleryImgs.length);
+                } else if (e.key === 'Escape') {
+                    lightbox.style.display = 'none';
+                    resetTransform();
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
